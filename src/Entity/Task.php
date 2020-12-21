@@ -3,13 +3,19 @@
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=TaskRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Task
 {
+
+    use Timestamps;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -27,6 +33,23 @@ class Task
      */
     private $isComplete;
 
+    /**
+     *@ORM\ManyToOne(targetEntity="App\Entity\TaskList", inversedBy="tasks") 
+     * 
+     */
+    private $list;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Note", mappedBy="note")
+     */
+    private $notes;
+
+    public function __construct()
+    {
+        $this->notes = new ArrayCollection();
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -36,6 +59,8 @@ class Task
     {
         return $this->title;
     }
+
+
 
     public function setTitle(string $title): self
     {
@@ -52,6 +77,48 @@ class Task
     public function setIsComplete(bool $isComplete): self
     {
         $this->isComplete = $isComplete;
+
+        return $this;
+    }
+
+    public function getList(): ?TaskList
+    {
+        return $this->list;
+    }
+
+    public function setList(?TaskList $list): self
+    {
+        $this->list = $list;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Note[]
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Note $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes[] = $note;
+            $note->setNote($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Note $note): self
+    {
+        if ($this->notes->removeElement($note)) {
+            // set the owning side to null (unless already changed)
+            if ($note->getNote() === $this) {
+                $note->setNote(null);
+            }
+        }
 
         return $this;
     }
