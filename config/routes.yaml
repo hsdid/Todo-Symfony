@@ -1,0 +1,9 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+
+
+lists:
+    type      : annotation
+    resource  : App\Controller\ListController
+    prefix    : api 
