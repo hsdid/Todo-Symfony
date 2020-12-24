@@ -27,9 +27,10 @@ use Symfony\Component\HttpFoundation\Request;
 class ListController extends AbstractFOSRestController
 {
 
-    public function __construct(TaskListRepository $taskListRepository,EntityManagerInterface $entityManager){
+    public function __construct(TaskListRepository $taskListRepository,EntityManagerInterface $entityManager, TaskRepository $taskRepository){
         $this->taskListRepository = $taskListRepository;
-        $this->entityManager = $entityManager;
+        $this->entityManager      = $entityManager;
+        $this->taskRepository     = $taskRepository;
     }
 
 
@@ -49,6 +50,7 @@ class ListController extends AbstractFOSRestController
     /**
      * @Rest\Get("/lists/{id}")
      * @return \FOS\RestBundle\View\View
+     * @param int $id
      */
     public function getList(int $id)
     {
@@ -87,28 +89,44 @@ class ListController extends AbstractFOSRestController
 
 
     /**
-     * @Rest\Put("/lists")
-     * 
+     * @Rest\Post("/lists/{id}/tasks")
+     * @Rest\RequestParam(name="title", description="Title of the new task", nullable=false)
+     * @param ParamFetcher $paramFetcher
+     * @param int $id
+     * @return \FOS\RestBundle\View\View
      */
 
-    public function putListsAction()
-    {
+    public function addTaskToList(int $id,ParamFetcher $paramFetcher) {
         
-        
+        $title = $paramFetcher->get('title');
 
+        if ($title) {
+            $list = $this->taskListRepository->find($id);
+
+            if ($list) {
+                $task = new Task();
+                $task->setTitle($title);
+                $task->setList($list);
+                
+                $list->addTask($task);
+
+                $this->entityManager->persist($task);
+                $this->entityManager->flush();
+
+                return $this->view($task, Response::HTTP_OK); 
+            }
+
+            return $this->view(['message' => 'List not found'], Response::HTTP_BAD_REQUEST);
+
+        }
+        return $this->view(['message' => 'Title cannot be null'], Response::HTTP_BAD_REQUEST);
+        
+        
     }
 
-     /**
-     * @Rest\Patch("/lists/{id}")
-     * 
-     */
+    
 
-    public function patchListsAction(int $id)
-    {
-        
-        
 
-    }
 
     /**
      * @Rest\Get("/lists/{id}/tasks")

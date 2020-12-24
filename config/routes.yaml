@@ -7,3 +7,13 @@ lists:
     type      : annotation
     resource  : App\Controller\ListController
     prefix    : api 
+
+tasks:
+    type      : annotation
+    resource  : App\Controller\TaskController
+    prefix    : api 
+
+notes:
+    type      : annotation
+    resource  : App\Controller\NoteController
+    prefix    : api 
