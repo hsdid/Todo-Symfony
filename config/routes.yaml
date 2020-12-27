@@ -3,6 +3,9 @@
 #    controller: App\Controller\DefaultController::index
 
 
+api_login_check:
+    path: /api/login_check
+
 lists:
     type      : annotation
     resource  : App\Controller\ListController
