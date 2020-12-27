@@ -20,7 +20,14 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 class TaskController extends AbstractFOSRestController
 {
     
-
+     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager, TaskRepository $taskRepository){
         
@@ -51,6 +58,20 @@ class TaskController extends AbstractFOSRestController
         return $this->view(['message' => 'Task not found'], Response::HTTP_BAD_REQUEST);
     
     }
+
+
+    /**
+     * @Rest\Get("/tasks/{id}")
+     * @param int $id
+     * @return \FOS\RestBundle\View\View
+     */
+    public function getTask(int $id) {
+
+        $data = $this->taskRepository->find($id);
+
+        return $this->view($data, Response::HTTP_OK);
+    }
+
 
     /**
      * @Rest\Get("/tasks/{id}/notes")
@@ -100,16 +121,20 @@ class TaskController extends AbstractFOSRestController
      * @param int $id
      * @return \FOS\RestBundle\View\View
      */
-    public function addNoteToTask(int $id) {
+    public function addNoteToTask(int $id, ParamFetcher $paramFetcher) {
 
         $noteText = $paramFetcher->get('note');
+
+        settype($noteText,"string");
+        
         $task = $this->taskRepository->find($id);
 
-        if ($task) {
+        if ($noteText) {
             
-            if ($noteText) {
+            if ($task) {
 
                 $note = new Note();
+
                 $note->setNote($noteText);
                 $note->setTask($task);
 
@@ -120,10 +145,9 @@ class TaskController extends AbstractFOSRestController
 
                 return $this->view($note, Response::HTTP_OK);
             }
-            return $this->view(['message' => 'Note cannot be empty'], Response::HTTP_BAD_REQUEST);
            
         }
-        return $this->view(['message' => 'Something went wrong'], Response::HTTP_BAD_REQUEST);
+        return $this->view(['message' => 'Something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
 
     }
     

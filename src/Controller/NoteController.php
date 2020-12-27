@@ -25,6 +25,23 @@ class NoteController extends AbstractFOSRestController
     }
 
 
+
+     /**
+     * @Rest\Get("/notes/{id}")
+     * @return \FOS\RestBundle\View\View
+     * @param int $id
+     */
+    public function getNote(int $id)
+    {
+       
+
+        $data =  $this->noteRepository->find($id);
+        
+        return $this->view($data, Response::HTTP_OK);
+
+    }
+
+
    /**
      * @Rest\Delete("/notes/{id}")
      * @param int $id

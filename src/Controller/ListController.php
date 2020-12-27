@@ -27,6 +27,19 @@ use Symfony\Component\HttpFoundation\Request;
 class ListController extends AbstractFOSRestController
 {
 
+    /**
+     * @var TaskListRepository
+     */
+    private $taskListRepository;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+    /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
     public function __construct(TaskListRepository $taskListRepository,EntityManagerInterface $entityManager, TaskRepository $taskRepository){
         $this->taskListRepository = $taskListRepository;
         $this->entityManager      = $entityManager;
@@ -54,7 +67,7 @@ class ListController extends AbstractFOSRestController
      */
     public function getList(int $id)
     {
-        //$data =  $this->taskListRepository->findOneBy(['id' => $id]);
+       
 
         $data =  $this->taskListRepository->find($id);
         
@@ -132,7 +145,7 @@ class ListController extends AbstractFOSRestController
      * @Rest\Get("/lists/{id}/tasks")
      * @return \FOS\RestBundle\View\View
      */
-    public function getListTasksAction(int $id)
+    public function getListTasks(int $id)
     {   
 
         $list = $this->taskListRepository->find($id);
@@ -188,7 +201,7 @@ class ListController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Delete("lists/{$id}")
+     * @Rest\Delete("lists/{id}")
      */
     public function removeList(int $id) {
 
@@ -200,7 +213,7 @@ class ListController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Patch("lists/{$id}/title")
+     * @Rest\Patch("lists/{id}/title")
      * @Rest\RequestParam(name="title", description="The new title for the list", nullable=false)
      * @param ParamFetcher $paramFetcher
      * @param int $id

@@ -40,7 +40,7 @@ class Task
     private $list;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Note", mappedBy="note")
+     * @ORM\OneToMany(targetEntity="App\Entity\Note", mappedBy="task", cascade={"REMOVE"})
      */
     private $notes;
 
@@ -105,7 +105,7 @@ class Task
     {
         if (!$this->notes->contains($note)) {
             $this->notes[] = $note;
-            $note->setNote($this);
+            $note->setTask($this);
         }
 
         return $this;
@@ -115,8 +115,8 @@ class Task
     {
         if ($this->notes->removeElement($note)) {
             // set the owning side to null (unless already changed)
-            if ($note->getNote() === $this) {
-                $note->setNote(null);
+            if ($note->getTask() === $this) {
+                $note->setTask(null);
             }
         }
 
