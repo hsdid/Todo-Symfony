@@ -4,6 +4,7 @@ namespace App\Controller;
 
 //use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+use App\Entity\Preference;
 use App\Entity\Task;
 use App\Entity\TaskList;
 use App\Repository\TaskListRepository;
@@ -88,6 +89,11 @@ class ListController extends AbstractFOSRestController
         if ($title) {
 
             $list = new TaskList();
+
+            $preferences = new Preference();
+            $preferences->setList($list);
+            
+            $list->setPreferences($preferences);
 
             $list->setTitle($title);
 

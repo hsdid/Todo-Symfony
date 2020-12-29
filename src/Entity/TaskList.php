@@ -50,6 +50,12 @@ class TaskList
     private $user;
 
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Preference", mappedBy="list", cascade={"PERSIST", "REMOVE"})
+     */
+    private $preferences;
+
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -134,6 +140,28 @@ class TaskList
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getPreferences(): ?Preference
+    {
+        return $this->preferences;
+    }
+
+    public function setPreferences(?Preference $preferences): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($preferences === null && $this->preferences !== null) {
+            $this->preferences->setList(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($preferences !== null && $preferences->getList() !== $this) {
+            $preferences->setList($this);
+        }
+
+        $this->preferences = $preferences;
 
         return $this;
     }
