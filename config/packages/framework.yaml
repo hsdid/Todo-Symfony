@@ -19,3 +19,8 @@ framework:
     serializer:
         circular_reference_handler: App\Serializer\CircularReferenceHandler
         enabled: true
+
+    assets:
+        packages:
+            background:
+                base_urls: '%env(APP_URL)%'

@@ -43,6 +43,13 @@ class TaskList
      */
     private $tasks;
 
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="lists")
+     */
+    private $user;
+
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -115,6 +122,18 @@ class TaskList
                 $task->setList(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
